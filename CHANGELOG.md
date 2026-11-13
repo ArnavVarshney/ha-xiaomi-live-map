@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Brand icon shipped with the integration (shown in Home Assistant 2026.3 and newer).
+
 ## 1.0.0
 
 First public release.

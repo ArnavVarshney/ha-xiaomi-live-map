@@ -11,5 +11,5 @@
   "issue_tracker": "https://github.com/ArnavVarshney/ha-xiaomi-live-map/issues",
   "loggers": ["custom_components.xiaomi_live_map"],
   "requirements": ["vacuum-map-parser-xiaomi>=0.1.3"],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
