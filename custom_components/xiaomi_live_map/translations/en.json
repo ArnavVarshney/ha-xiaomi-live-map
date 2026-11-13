@@ -1,0 +1,48 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Xiaomi Live Map",
+        "description": "Pick the robot. The map is read through the Xiaomi cloud session of Xiaomi Cloud Map Extractor. The entities are optional and make the map faster and smarter.",
+        "data": {
+          "source_entry_id": "Robot (Xiaomi Cloud Map Extractor entry)",
+          "vacuum_entity": "Vacuum entity",
+          "active_entity": "Job active entity",
+          "map_name_entity": "Map name entity"
+        },
+        "data_description": {
+          "vacuum_entity": "Polls fast while it is cleaning, returning or paused, and reacts the moment a clean starts.",
+          "active_entity": "Optional on/off entity that is on for the whole job, including mop-washing breaks at the dock.",
+          "map_name_entity": "Optional sensor holding the live map object name (JSON with an obj_name ending in the map name). Without it the map named 0 is read, which is right for most robots."
+        }
+      }
+    },
+    "error": {
+      "unknown_source": "That map extractor entry no longer exists.",
+      "unsupported_model": "Only Xiaomi-platform robots (models starting with xiaomi.vacuum.) are supported."
+    },
+    "abort": {
+      "no_source": "Set up Xiaomi Cloud Map Extractor (v3) for your robot first.",
+      "already_configured": "Every robot from Xiaomi Cloud Map Extractor already has a live map."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Xiaomi Live Map options",
+        "data": {
+          "vacuum_entity": "Vacuum entity",
+          "active_entity": "Job active entity",
+          "map_name_entity": "Map name entity",
+          "watch_interval": "Update interval while cleaning, card open",
+          "active_interval": "Update interval while cleaning, no card open",
+          "idle_interval": "Update interval while docked, no card open"
+        },
+        "data_description": {
+          "watch_interval": "The robot uploads its map every few seconds while it cleans. Each update is one small cloud download.",
+          "idle_interval": "While a card is open and the robot is docked, the map is checked every 30 seconds."
+        }
+      }
+    }
+  }
+}

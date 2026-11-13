@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- Card playground with a fake Home Assistant. Generate payload.js first: python dev/make_payload.py
+     Then open dev/demo.html?m=live (cleaning), ?m=last (docked, last clean) or ?m=sel (rooms picked). -->
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xiaomi Live Map demo</title>
+<style>
+  body { margin: 0; padding: 16px; background: #111318; font-family: Roboto, system-ui, sans-serif;
+    --primary-color: #03a9f4; --secondary-text-color: #9aa; }
+  ha-card { display: block; background: #1c1f26; border-radius: 12px; border: 1px solid #2c303a; }
+  #host { max-width: 520px; }
+</style>
+<script src="payload.js"></script>
+<script src="../custom_components/xiaomi_live_map/frontend/xiaomi-live-map-card.js"></script>
+</head>
+<body>
+<div id="host"></div>
+<script>
+  const q = new URLSearchParams(location.search), mode = q.get("m") || "live", S = window.SIM;
+  const states = {
+    "sensor.robot_status": { state: mode === "live" ? "Cleaning · Study" : "Charging · 100%", attributes: {} },
+    "sensor.robot_area": { state: "24.5", attributes: { unit_of_measurement: "m²" } },
+    "sensor.robot_time": { state: "31", attributes: { unit_of_measurement: "min" } },
+    "sensor.robot_battery": { state: "64", attributes: { unit_of_measurement: "%" } },
+  };
+  let push;
+  const hass = {
+    states,
+    callService: (domain, service, data) => { window.LAST_CALL = [domain, service, data]; console.log("service", domain, service, JSON.stringify(data)); },
+    connection: { subscribeMessage: (cb) => { push = cb; setTimeout(start, 50); return Promise.resolve(() => {}); } },
+  };
+  const card = document.createElement("xiaomi-live-map-card");
+  card.setConfig({ status_entity: "sensor.robot_status", chips: ["sensor.robot_area", "sensor.robot_time", "sensor.robot_battery"],
+    start_script: "script.clean_rooms" });
+  document.getElementById("host").appendChild(card);
+  card.hass = hass;
+  function start() {
+    const f = JSON.parse(JSON.stringify(window.FULL));
+    if (mode === "live") {
+      let n = +(q.get("n") || Math.floor(S.length / 4 * 0.8));
+      f.path_pts = S.slice(0, n * 4); push(f);
+      setInterval(() => {
+        const k = Math.min(S.length / 4, n + 6); if (k === n) return;
+        push({ rev: 2, active: true, error: null, robot: { x: S[(k - 1) * 4], y: S[(k - 1) * 4 + 1], yaw: 0 }, path_from: n, path_pts: S.slice(n * 4, k * 4), path_len: k });
+        n = k;
+      }, 1000);
+    } else {
+      f.active = false; f.path_pts = S.slice(0, 4); f.last_path = S; f.last_ts = Date.now() / 1000 - 7200;
+      f.robot = null; push(f);
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "Xiaomi Live Map",
+  "homeassistant": "2025.2.0",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "xiaomi_live_map.zip"
+}
